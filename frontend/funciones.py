@@ -1,8 +1,10 @@
 import spotipy
 import spotipy.util as util
 
-cid = '9f1347c074614c0ebe974b2207a8ee3f'
-secret = '16b95b9f52194f07acd7fb9ab1b1989c'
+with open("credenciales.csv", "r") as archivo:
+    linea = archivo.readlines()
+    cid = linea[0].split(',')[0]
+    secret = linea[0].split(',')[1]
 redirect_uri = 'http://localhost:8888/callback'
 scope = 'playlist-modify-public playlist-modify-private'
 
