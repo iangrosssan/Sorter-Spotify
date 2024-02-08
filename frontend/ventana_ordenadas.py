@@ -1,6 +1,6 @@
 import sys
 
-from frontend.funciones import obtener_playlists, ordenar_playlist, ordenar_en_app
+from backend.funciones import obtener_playlists, ordenar_playlist, ordenar_en_app
 
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
 from PyQt5.uic import loadUiType

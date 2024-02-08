@@ -1,6 +1,6 @@
 import sys
 
-from frontend.funciones import obtener_playlists
+from backend.funciones import obtener_playlists
 
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 from PyQt5.QtGui import QFont
