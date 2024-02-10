@@ -29,12 +29,14 @@ class VentanaOrdenadas(window_name, base_class):
         for track in tracks:
             if artista == '':
                 artista = track[7][0]
+                pais = track[9]
                 item = QTreeWidgetItem(self.lista_playlists)
-                item.setText(0, artista)
+                item.setText(0, f'{pais}. {artista}')
             elif artista != track[7][0]:
                 artista = track[7][0]
+                pais = track[9]
                 item = QTreeWidgetItem(self.lista_playlists)
-                item.setText(0, f"\n\n{artista}")
+                item.setText(0, f"\n\n{pais}. {artista}")
                 album = ''
             if album == '':
                 album = track[3]
@@ -50,8 +52,9 @@ class VentanaOrdenadas(window_name, base_class):
             item_grandchild.setText(0, f"\t{track[0]}")
             item_child.addChild(item_grandchild)
 
-    def ordenar_en_app(self):
-        ordenar_en_app(self.uri)
+    def ordenar(self):
+        for i in ordenar_en_app(self.uri):
+            print(i)
 
 
 if __name__ == '__main__':

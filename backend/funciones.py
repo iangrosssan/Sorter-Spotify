@@ -61,7 +61,7 @@ def ordenar_playlist(uri):
             d_uri.write(f"{track_uri};")
     ordenadas.sort(key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
     for i in ordenadas:
-        with open('backend/o_uri.csv','a') as o_uri:
+        with open('backend/o_uri.csv', 'a') as o_uri:
             o_uri.write(f"{i[8]};")
     return ordenadas
 
@@ -70,7 +70,7 @@ def ordenar_en_app(uri):
     ordenadas = open('backend/o_uri.csv', 'r')
     o_uri = ordenadas.readline().split(';')[:-1]
     ordenadas.close()
-    desordenadas = open('backend/d_uri.csv','r+')
+    desordenadas = open('backend/d_uri.csv', 'r+')
     d_uri = desordenadas.readline().split(';')[:-1]
     n = 0
     for n_uri in o_uri:
@@ -78,4 +78,4 @@ def ordenar_en_app(uri):
         cambio = d_uri.pop(d_uri.index(n_uri))
         d_uri.insert(0, cambio)
         n += 1
-        print(f"{n}/{len(o_uri)}")
+        yield f"{n}/{len(o_uri)}"
