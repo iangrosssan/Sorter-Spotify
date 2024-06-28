@@ -37,29 +37,30 @@ def ordenar_playlist(uri):
     for i in obtener_tracks(uri):
         info_cancion = []
         nombre = i['track']['name']
-        info_cancion.append(nombre)
+        info_cancion.append(nombre) #0
         n_disc = i['track']['disc_number']
-        info_cancion.append(n_disc)
+        info_cancion.append(n_disc) #1
         n_track = i['track']['track_number']
-        info_cancion.append(n_track)
+        info_cancion.append(n_track) #2
         album = i['track']['album']['name']
-        info_cancion.append(album)
+        info_cancion.append(album) #3
         ano = i['track']['album']['release_date'][:4]
-        info_cancion.append(ano)
+        info_cancion.append(ano) #4
         mes = i['track']['album']['release_date'][5:7]
-        info_cancion.append(mes)
+        info_cancion.append(mes) #5
         dia = i['track']['album']['release_date'][8:10]
-        info_cancion.append(dia)
+        info_cancion.append(dia) #6
         artistas = []
         for j in i['track']['artists']:
             artistas.append(j['name'])
-        info_cancion.append(artistas)
+        info_cancion.append(artistas) #7
         track_uri = i['track']['uri'].split(':')[2]
         info_cancion.append(track_uri)
         ordenadas.append(info_cancion)
         with open('backend/d_uri.csv', 'a') as d_uri:
             d_uri.write(f"{track_uri};")
     ordenadas.sort(key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
+                                # Artista, año,  mes,  dia, disco, track
     for i in ordenadas:
         with open('backend/o_uri.csv', 'a') as o_uri:
             o_uri.write(f"{i[8]};")
