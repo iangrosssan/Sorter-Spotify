@@ -1,5 +1,8 @@
 import spotipy
 import spotipy.util as util
+import random
+from itertools import groupby
+
 
 
 with open("backend/credenciales.csv", "r") as archivo:
@@ -30,7 +33,7 @@ def obtener_tracks(uri):
     return tracks
 
 
-def ordenar_playlist(uri):
+def ordenar_playlist(uri, jerarquia):
     ordenadas = []
     open('backend/d_uri.csv', 'w').close()
     open('backend/o_uri.csv', 'w').close()
@@ -59,7 +62,15 @@ def ordenar_playlist(uri):
         ordenadas.append(info_cancion)
         with open('backend/d_uri.csv', 'a') as d_uri:
             d_uri.write(f"{track_uri};")
-    ordenadas.sort(key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
+    #print(jerarquias[jerarquia].strip())
+    if jerarquia == 1:
+        ordenadas = shuffle_with_groups(ordenadas)
+    elif jerarquia == 3:
+        ordenadas = simple_shuffle(ordenadas)
+    else:
+        key = jerarquias[jerarquia]
+        ordenadas.sort(key=key)
+    #ordenadas.sort(key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
                                 # Artista, año,  mes,  dia, disco, track
     for i in ordenadas:
         with open('backend/o_uri.csv', 'a') as o_uri:
@@ -80,3 +91,29 @@ def ordenar_en_app(uri):
         d_uri.insert(0, cambio)
         n += 1
         yield f"{n}/{len(o_uri)}"
+
+
+def shuffle_with_groups(ordenadas):
+    # Step 1: Sort the list to group identical items together
+    sorted_list = sorted(ordenadas, key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
+    
+    # Step 2: Group the identical items together
+    groups = [list(group) for key, group in groupby(sorted_list, key=lambda x: x[7][0])]
+    
+    # Step 3: Shuffle the groups themselves
+    random.shuffle(groups)
+    
+    # Step 4: Flatten the list of groups
+    shuffled_list = [item for group in groups for item in group]
+    
+    return shuffled_list
+
+
+def simple_shuffle(ordenadas):
+    random.shuffle(ordenadas)
+    return ordenadas
+
+
+jerarquias = [lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]), None,
+              lambda x: (x[4], x[5], x[6], x[1], x[2]),
+              None]

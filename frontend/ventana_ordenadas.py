@@ -5,7 +5,7 @@ from backend.funciones import obtener_playlists, ordenar_playlist, ordenar_en_ap
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
 from PyQt5.uic import loadUiType
 
-window_name, base_class = loadUiType("frontend/ventana_ordenadas2.ui")
+window_name, base_class = loadUiType("frontend/ventana_ordenadas3.ui")
 
 
 class VentanaOrdenadas(window_name, base_class):
@@ -17,6 +17,7 @@ class VentanaOrdenadas(window_name, base_class):
 
     def clear(self):
         self.progressBar.setValue(0)
+        self.jerarquias.selectRow(0)
 
     def playlist_elegida(self, indice):
         playlists = obtener_playlists()
@@ -28,7 +29,7 @@ class VentanaOrdenadas(window_name, base_class):
         self.lista_playlists.clear()
         artista = ''
         album = ''
-        tracks = ordenar_playlist(self.uri)
+        tracks = ordenar_playlist(self.uri, self.jerarquias.selectedIndexes()[0].row())
         for track in tracks:
             if artista == '':
                 artista = track[7][0]
