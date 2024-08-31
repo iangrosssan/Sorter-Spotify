@@ -42,10 +42,11 @@ ventana_inicio.show()
 
 ventana_inicio.t_playlists.clicked.connect(ventana_inicio.activar_botones)
 
+ventana_inicio.b_ordenar.clicked.connect(ventana_ordenadas.clear)
 ventana_inicio.b_ordenar.clicked.connect(lambda: ventana_ordenadas.playlist_elegida(ventana_inicio.seleccion()))
 ventana_inicio.b_ordenar.clicked.connect(abrir_ordenadas)
 
-ventana_ordenadas.b_ordenar.clicked.connect(abrir_progreso)
+#ventana_ordenadas.b_ordenar.clicked.connect(abrir_progreso)
 ventana_ordenadas.b_ordenar.clicked.connect(lambda: ventana_ordenadas.ordenar())
 
 

@@ -15,6 +15,9 @@ class VentanaOrdenadas(window_name, base_class):
         self.setupUi(self)
         self.uri = ""
 
+    def clear(self):
+        self.progressBar.setValue(0)
+
     def playlist_elegida(self, indice):
         playlists = obtener_playlists()
         self.l_nombre.setText(playlists[indice].split(":")[0])
@@ -29,14 +32,12 @@ class VentanaOrdenadas(window_name, base_class):
         for track in tracks:
             if artista == '':
                 artista = track[7][0]
-                pais = track[9]
                 item = QTreeWidgetItem(self.lista_playlists)
-                item.setText(0, f'{pais}. {artista}')
+                item.setText(0, f'{artista}')
             elif artista != track[7][0]:
                 artista = track[7][0]
-                pais = track[9]
                 item = QTreeWidgetItem(self.lista_playlists)
-                item.setText(0, f"\n\n{pais}. {artista}")
+                item.setText(0, f"\n\n{artista}")
                 album = ''
             if album == '':
                 album = track[3]
@@ -54,7 +55,12 @@ class VentanaOrdenadas(window_name, base_class):
 
     def ordenar(self):
         for i in ordenar_en_app(self.uri):
-            print(i)
+            actual = int(i.split("/")[0])
+            if actual == 1:
+                total = int(i.split("/")[1])
+                self.progressBar.setMaximum(total)
+            self.progressBar.setValue(actual)
+#            print(self.progressBar.value())
 
 
 if __name__ == '__main__':
