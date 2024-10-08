@@ -1,0 +1,142 @@
+/* QWidget */
+QWidget {
+    background-color: rgb(30, 30, 30); /* Dark background */
+}
+
+
+
+/* QTableWidget */
+/* Table Widget settings */
+QTableWidget {
+    color: rgb(255, 255, 255); /* White text */
+    background-color: rgb(50, 50, 50); /* Slightly lighter dark background */
+    font: 14pt "Consolas"; /* Consistent font */
+    border-radius: 10px;
+    border: 1px solid rgb(70, 70, 70); /* Dark border */
+    padding: 5px;
+}
+
+/* Hover effect for Table Widget items */
+QTableWidget::item:hover {
+    background-color: rgb(0, 200, 0); /* Spotify green on hover */
+}
+
+/* Selected state for Table Widget items */
+QTableWidget::item:selected {
+    background-color: rgb(0, 200, 0); /* Spotify green when selected */
+    color: rgb(255, 255, 255); /* White text when selected */
+}
+
+
+
+/* QTreeWidget */
+/* Tree Widget settings */
+QTreeWidget {
+    color: rgb(255, 255, 255); /* White text */
+    background-color: rgb(50, 50, 50); /* Slightly lighter dark background */
+    font: 14pt "Consolas"; /* Consistent font */
+    border-radius: 10px;
+    border: 1px solid rgb(70, 70, 70); /* Dark border */
+    padding: 5px;
+}
+
+/* Hover effect for Tree Widget items */
+QTreeWidget::item:hover {
+    background-color: rgb(0, 200, 0); /* Spotify green on hover */
+}
+
+/* Selected state for Tree Widget items */
+QTreeWidget::item:selected {
+    background-color: rgb(0, 200, 0); /* Spotify green when selected */
+    color: rgb(255, 255, 255); /* White text when selected */
+}
+
+
+
+/* QPushButton */
+/* Push Button settings */
+QPushButton {
+    color: rgb(255, 255, 255); /* White text */
+    background-color: rgb(0, 200, 0); /* Spotify green */
+    font: 14pt "Consolas"; /* Consistent font */
+    border: 2px solid rgb(0, 150, 0); /* Darker green border */
+    border-radius: 10px;
+    padding: 5px;
+}
+
+/* Push Button hover state */
+QPushButton:hover {
+    background-color: rgb(0, 150, 0); /* Darker green on hover */
+}
+
+/* Push Button pressed state */
+QPushButton:pressed {
+    background-color: rgb(0, 100, 0); /* Even darker green when pressed */
+}
+
+/* Push Button disabled state */
+QPushButton:disabled {
+    color: rgb(150, 150, 150); /* Grey text */
+    background-color: rgb(50, 50, 50); /* Dark grey background */
+    border: 2px solid rgb(70, 70, 70); /* Darker grey border */
+}
+
+
+
+/* QLabel */
+/* Label settings */
+QLabel {
+    font: 28pt "Consolas"; /* Consistent font */
+    background-color: rgba(0, 0, 0, 0); /* Transparent background */
+    color: rgb(0, 200, 0); /* Spotify green */
+    padding: 5px; /* Padding for better spacing */
+}
+
+
+
+/* QProgressBar */
+/* Progress Bar settings */
+QProgressBar {
+    border: 2px solid rgb(70, 70, 70); /* Dark border */
+    border-radius: 10px; /* Rounded corners */
+    background-color: rgb(50, 50, 50); /* Dark background for the bar */
+    text-align: center; /* Center the text */
+    font: 12pt "Consolas"; /* Increase font size and make it bold */
+    color: rgb(255, 255, 255); /* White text color */
+}
+
+/* Progress Bar text */
+QProgressBar::chunk {
+    background-color: rgb(0, 200, 0); /* Spotify green for the filled part */
+    border-radius: 10px; /* Rounded corners for the chunk */
+}
+
+
+
+/* QScrollBar */
+/* Scrollbar settings for both Table and Tree Widgets */
+QScrollBar:vertical {
+    border: none; /* No border */
+    background: rgb(50, 50, 50); /* Dark background */
+    width: 12px; /* Width of the scrollbar */
+    margin: 22px 0 22px 0; /* Margins to center the scrollbar */
+}
+
+QScrollBar::handle:vertical {
+    background: rgb(0, 200, 0); /* Spotify green for the scrollbar handle */
+    border-radius: 5px; /* Rounded corners */
+}
+
+QScrollBar::handle:vertical:hover {
+    background: rgb(0, 150, 0); /* Darker green on hover */
+}
+
+QScrollBar::add-line:vertical, 
+QScrollBar::sub-line:vertical {
+    background: none; /* No background for the add/sub lines */
+}
+
+QScrollBar::add-page:vertical, 
+QScrollBar::sub-page:vertical {
+    background: none; /* No background for the add/sub pages */
+}

@@ -13,9 +13,6 @@
   <property name="windowTitle">
    <string>Spotify Sorter</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(0, 200, 0);</string>
-  </property>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
@@ -52,12 +49,7 @@
          </size>
         </property>
         <property name="styleSheet">
-         <string notr="true">font: 28pt &quot;Consolas&quot;;
-background-color: rgb(0, 0, 0);
-color: rgb(0, 200, 0);
-border: 2px solid white;
-border-radius: 10px;
-border-style: outset;</string>
+         <string notr="true"/>
         </property>
         <property name="text">
          <string/>
@@ -98,14 +90,7 @@ border-style: outset;</string>
            </size>
           </property>
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(0, 0, 0);
-color: rgb(0, 200, 0);
-border-radius: 10px;
-border-style: outset;
-padding: 5px;
-border: 1px solid white;
-font: 16pt &quot;Consolas&quot;;
-</string>
+           <string notr="true"/>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::DoubleClicked</set>
@@ -164,14 +149,7 @@ font: 16pt &quot;Consolas&quot;;
              <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="styleSheet">
-             <string notr="true">color: rgb(255, 255, 255);
-background-color: rgb(0, 0, 0);
-font: 14pt &quot;Consolas&quot;;
-border-radius: 10px;
-border-style: outset;
-padding: 5px;
-border: 1px solid black;
-</string>
+             <string notr="true"/>
             </property>
             <property name="horizontalScrollBarPolicy">
              <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -198,7 +176,7 @@ border: 1px solid black;
              <bool>false</bool>
             </attribute>
             <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>200</number>
+             <number>300</number>
             </attribute>
             <attribute name="verticalHeaderVisible">
              <bool>false</bool>
@@ -270,7 +248,7 @@ border: 1px solid black;
             <property name="minimumSize">
              <size>
               <width>200</width>
-              <height>30</height>
+              <height>40</height>
              </size>
             </property>
             <property name="maximumSize">
@@ -331,15 +309,7 @@ border: 1px solid black;
            <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <property name="styleSheet">
-           <string notr="true">color: rgb(0, 0, 0);
-background-color: rgb(255, 255, 255);
-font: 14pt &quot;Consolas&quot;;
-border: 2px solid white;
-border-radius: 10px;
-border-style: outset;
-padding: 5px;
-border: 2px solid black;
-</string>
+           <string notr="true"/>
           </property>
           <property name="text">
            <string>Ordenar Playlist</string>

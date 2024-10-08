@@ -2,7 +2,8 @@ import sys
 
 from backend.funciones import obtener_playlists, ordenar_playlist, ordenar_en_app
 
-from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
+from PyQt5.QtWidgets import QApplication, QTreeWidgetItem, QScrollBar
+from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUiType
 
 window_name, base_class = loadUiType("frontend/ventana_ordenadas3.ui")
@@ -14,6 +15,12 @@ class VentanaOrdenadas(window_name, base_class):
         super().__init__()
         self.setupUi(self)
         self.uri = ""
+        self.jerarquias.verticalScrollBar().setCursor(Qt.OpenHandCursor)
+        self.jerarquias.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
+        self.jerarquias.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
+        self.lista_playlists.verticalScrollBar().setCursor(Qt.OpenHandCursor)
+        self.lista_playlists.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
+        self.lista_playlists.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
 
     def clear(self):
         self.progressBar.setValue(0)
@@ -54,6 +61,7 @@ class VentanaOrdenadas(window_name, base_class):
             item_grandchild.setText(0, f"\t{track[0]}")
             item_child.addChild(item_grandchild)
 
+
     def ordenar(self):
         for i in ordenar_en_app(self.uri):
             actual = int(i.split("/")[0])
@@ -62,6 +70,14 @@ class VentanaOrdenadas(window_name, base_class):
                 self.progressBar.setMaximum(total)
             self.progressBar.setValue(actual)
 #            print(self.progressBar.value())
+
+
+    def on_slider_pressed(self):
+        self.sender().setCursor(Qt.ClosedHandCursor)
+    
+
+    def on_slider_released(self):
+        self.sender().setCursor(Qt.OpenHandCursor)
 
 
 if __name__ == '__main__':
