@@ -3,6 +3,7 @@ import spotipy.util as util
 import random
 from itertools import groupby
 
+from backend.classes import PlaylistMetaData
 
 
 with open("backend/credenciales.csv", "r") as archivo:
@@ -35,33 +36,70 @@ def obtener_tracks(uri):
 
 def ordenar_playlist(uri, jerarquia):
     ordenadas = []
+    metadata = []
+    playlist_metadata = PlaylistMetaData()
     open('backend/d_uri.csv', 'w').close()
     open('backend/o_uri.csv', 'w').close()
     for i in obtener_tracks(uri):
         info_cancion = []
+
         nombre = i['track']['name']
         info_cancion.append(nombre) #0
+                
         n_disc = i['track']['disc_number']
         info_cancion.append(n_disc) #1
+        
         n_track = i['track']['track_number']
         info_cancion.append(n_track) #2
+        
         album = i['track']['album']['name']
         info_cancion.append(album) #3
+        
         ano = i['track']['album']['release_date'][:4]
         info_cancion.append(ano) #4
+        
         mes = i['track']['album']['release_date'][5:7]
         info_cancion.append(mes) #5
+        
         dia = i['track']['album']['release_date'][8:10]
         info_cancion.append(dia) #6
+        
         artistas = []
         for j in i['track']['artists']:
             artistas.append(j['name'])
         info_cancion.append(artistas) #7
+        
         track_uri = i['track']['uri'].split(':')[2]
         info_cancion.append(track_uri)
         ordenadas.append(info_cancion)
         with open('backend/d_uri.csv', 'a') as d_uri:
             d_uri.write(f"{track_uri};")
+        
+        # Playlist Metadata Info
+        track_id = i['track']['id']
+
+        # danceability = sp2.audio_features(track_id)[0]['danceability']
+        # energy = sp2.audio_features(track_id)[0]['energy']
+        # speechiness = sp2.audio_features(track_id)[0]['speechiness']
+        # acousticness = sp2.audio_features(track_id)[0]['acousticness']
+        # instrumentalness = sp2.audio_features(track_id)[0]['instrumentalness']
+        # valence = sp2.audio_features(track_id)[0]['valence']
+        # liveness = sp2.audio_features(track_id)[0]['liveness'] # Flag live tracks
+        # tempo = sp2.audio_features(track_id)[0]['tempo'] # Custom Order
+        # mode = sp2.audio_features(track_id)[0]['mode'] # Custom Order
+        danceability = 0.5
+        energy = 0.9
+        speechiness = 0.1
+        acousticness = 0.6
+        instrumentalness = 0.7
+        valence = 0.3
+        liveness = 0.5
+        tempo = 0.5
+        mode = 0.5
+        track_metadata = [danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode]
+        metadata.append(track_metadata)
+        playlist_metadata.add_track(track_metadata)
+
     #print(jerarquias[jerarquia].strip())
     if jerarquia == 1:
         ordenadas = shuffle_with_groups(ordenadas)
@@ -75,7 +113,7 @@ def ordenar_playlist(uri, jerarquia):
     for i in ordenadas:
         with open('backend/o_uri.csv', 'a') as o_uri:
             o_uri.write(f"{i[8]};")
-    return ordenadas
+    return ordenadas, metadata, playlist_metadata.get_average_features()
 
 
 def ordenar_en_app(uri):

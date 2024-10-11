@@ -5,6 +5,26 @@ from PyQt5.QtWidgets import QApplication
 from frontend.ventana_inicio import VentanaInicio
 from frontend.ventana_ordenadas import VentanaOrdenadas
 
+from backend.funciones import PlaylistMetaData
+
+
+#FUNCIONES
+def load_stylesheet(filename):
+    with open(filename, "r") as file:
+        return file.read()
+    
+
+def abrir_ordenadas():
+    if not ventana_ordenadas.isVisible():
+        ventana_ordenadas.show()
+#         load_metadata()
+
+
+# def load_metadata():
+#     playlist_metadata = PlaylistMetaData()
+    
+
+    
 
 if __name__ == '__main__':
     def hook(type, traceback):
@@ -12,19 +32,14 @@ if __name__ == '__main__':
         print(traceback)
     sys.__excepthook__ = hook
     app = QApplication([])
+    stylesheet = load_stylesheet("frontend/styles.qss")
+    app.setStyleSheet(stylesheet)
+
 
 
 # INSTANCIAS
 ventana_inicio = VentanaInicio()
 ventana_ordenadas = VentanaOrdenadas()
-
-
-# FUNCIONES
-def abrir_ordenadas():
-    if not ventana_ordenadas.isVisible():
-        ventana_ordenadas.show()
-    else:
-        ventana_ordenadas.hide()
 
 
 # FLUJO

@@ -2,7 +2,7 @@ import sys
 
 from backend.funciones import obtener_playlists
 
-from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView, QScrollBar
+from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import Qt
 from PyQt5.uic import loadUiType
 
