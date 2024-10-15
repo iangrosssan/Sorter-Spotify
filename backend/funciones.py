@@ -1,11 +1,12 @@
 import spotipy
 import spotipy.util as util
-import random
-from itertools import groupby
+import os, json
 
 from backend.classes import PlaylistMetaData
+from backend.sorters import shuffle_with_groups, simple_shuffle, jerarquias
 
 
+# Credenciales
 with open("backend/credenciales.csv", "r") as archivo:
     linea = archivo.readlines()
     cid = linea[0].split(',')[0]
@@ -18,13 +19,31 @@ token = util.prompt_for_user_token(client_id=cid, client_secret=secret, redirect
 sp2 = spotipy.Spotify(auth=token)
 
 
+# Stylesheet
+def load_stylesheet(filename):
+    with open(filename, "r") as file:
+        return file.read()
+
+
+# Spotify call playlists
 def obtener_playlists():
     playlists = []
     for i in sp2.user_playlists(user)['items']:
         playlists.append(f"{i['name']}:{i['id']}")
+    guardar_playlists(playlists)
     return playlists
 
 
+# JSON playlists
+def guardar_playlists(playlists):
+    playlists = {
+        uri: {'name': name, 'tracks_file': f'backend/attribute_cache/{uri}.json'} for name, uri in [i.split(':') for i in playlists]
+    }
+    with open('backend/attribute_cache/playlists.json', 'w', encoding='utf-8') as jsonfile:
+        json.dump(playlists, jsonfile, ensure_ascii=False, indent=4)
+
+
+# Spotify call tracks
 def obtener_tracks(uri):
     results = sp2.user_playlist_tracks(user,playlist_id=uri)
     tracks = results['items']
@@ -34,12 +53,15 @@ def obtener_tracks(uri):
     return tracks
 
 
+# Sorter
 def ordenar_playlist(uri, jerarquia):
     ordenadas = []
-    metadata = []
+    metadata_old = []
     playlist_metadata = PlaylistMetaData()
+
     open('backend/d_uri.csv', 'w').close()
     open('backend/o_uri.csv', 'w').close()
+
     for i in obtener_tracks(uri):
         info_cancion = []
 
@@ -74,33 +96,51 @@ def ordenar_playlist(uri, jerarquia):
         ordenadas.append(info_cancion)
         with open('backend/d_uri.csv', 'a') as d_uri:
             d_uri.write(f"{track_uri};")
-        
+
         # Playlist Metadata Info
         track_id = i['track']['id']
 
-        # danceability = sp2.audio_features(track_id)[0]['danceability']
-        # energy = sp2.audio_features(track_id)[0]['energy']
-        # speechiness = sp2.audio_features(track_id)[0]['speechiness']
-        # acousticness = sp2.audio_features(track_id)[0]['acousticness']
-        # instrumentalness = sp2.audio_features(track_id)[0]['instrumentalness']
-        # valence = sp2.audio_features(track_id)[0]['valence']
-        # liveness = sp2.audio_features(track_id)[0]['liveness'] # Flag live tracks
-        # tempo = sp2.audio_features(track_id)[0]['tempo'] # Custom Order
-        # mode = sp2.audio_features(track_id)[0]['mode'] # Custom Order
-        danceability = 0.5
-        energy = 0.9
-        speechiness = 0.1
-        acousticness = 0.6
-        instrumentalness = 0.7
-        valence = 0.3
-        liveness = 0.5
-        tempo = 0.5
-        mode = 0.5
-        track_metadata = [danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode]
-        metadata.append(track_metadata)
-        playlist_metadata.add_track(track_metadata)
+        danceability = sp2.audio_features(track_id)[0]['danceability']
+        energy = sp2.audio_features(track_id)[0]['energy']
+        speechiness = sp2.audio_features(track_id)[0]['speechiness']
+        acousticness = sp2.audio_features(track_id)[0]['acousticness']
+        instrumentalness = sp2.audio_features(track_id)[0]['instrumentalness']
+        valence = sp2.audio_features(track_id)[0]['valence']
+        liveness = sp2.audio_features(track_id)[0]['liveness'] # Flag live tracks
+        tempo = sp2.audio_features(track_id)[0]['tempo'] # Custom Order
+        mode = sp2.audio_features(track_id)[0]['mode'] # Custom Order
+        
+        track_metadata = {
+            track_uri: {
+                'nombre': nombre,
+                'n_disc': n_disc,
+                'n_track': n_track,
+                'album': album,
+                'ano': ano,
+                'mes': mes,
+                'dia': dia,
+                'artistas': artistas,
+                'id': track_id,
+                'danceability': danceability,
+                'energy': energy,
+                'speechiness': speechiness,
+                'acousticness': acousticness,
+                'instrumentalness': instrumentalness,
+                'valence': valence,
+                'liveness': liveness,
+                'tempo': tempo,
+                'mode': mode
+            }
+        }
 
-    #print(jerarquias[jerarquia].strip())
+        add_tracks_to_playlist(uri, track_metadata)
+        
+
+        track_metadata_old = [danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode]
+        metadata_old.append(track_metadata_old)
+        playlist_metadata.add_track(track_metadata_old)
+
+
     if jerarquia == 1:
         ordenadas = shuffle_with_groups(ordenadas)
     elif jerarquia == 3:
@@ -113,7 +153,66 @@ def ordenar_playlist(uri, jerarquia):
     for i in ordenadas:
         with open('backend/o_uri.csv', 'a') as o_uri:
             o_uri.write(f"{i[8]};")
-    return ordenadas, metadata, playlist_metadata.get_average_features()
+    return ordenadas, metadata_old, playlist_metadata.get_average_features()
+
+
+# JSON load playlists
+def load_master_file(master_file_path='backend/attribute_cache/playlists.json'):
+    if os.path.exists(master_file_path):
+        with open(master_file_path, 'r', encoding='utf-8') as master_file:
+            playlists = json.load(master_file)
+            return playlists
+    else:
+        return None
+
+
+# JSON access playlist file
+def get_playlist_track_file(playlist_uri, master_file_path='backend/attribute_cache/playlists.json'):
+    playlists = load_master_file(master_file_path)
+    
+    if playlists is None:
+        return None
+    
+    # Check if the playlist exists in the master file
+    if playlist_uri in playlists:
+        playlist_file_path = playlists[playlist_uri]['tracks_file']
+        return playlist_file_path
+
+
+# JSON add tracks to playlist
+def add_tracks_to_playlist(playlist_uri, track_metadata, master_file_path='backend/attribute_cache/playlists.json'):
+    # Load the master JSON file
+    if not os.path.exists(master_file_path):
+        print(f"Master file {master_file_path} does not exist.")
+        return
+    
+    with open(master_file_path, 'r', encoding='utf-8') as master_file:
+        playlists = json.load(master_file)
+
+    # Check if the playlist exists in the master file
+    if playlist_uri not in playlists:
+        print(f"Playlist {playlist_uri} not found.")
+        return
+    
+    # Get the track file path from the master JSON
+    playlist_file_path = playlists[playlist_uri]['tracks_file']
+
+    # Load existing track metadata from the track file (or start fresh)
+    if os.path.exists(playlist_file_path):
+        with open(playlist_file_path, 'r', encoding='utf-8') as playlist_file:
+            existing_tracks = json.load(playlist_file)
+    else:
+        existing_tracks = {}
+
+    # Add or update the track metadata
+    existing_tracks.update(track_metadata)
+
+    # Save the updated tracks back to the track file
+    with open(playlist_file_path, 'w', encoding='utf-8') as playlist_file:
+        json.dump(existing_tracks, playlist_file, ensure_ascii=False, indent=4)
+    
+    print(f"Tracks added to {playlists[playlist_uri]['name']}.")
+
 
 
 def ordenar_en_app(uri):
@@ -129,29 +228,3 @@ def ordenar_en_app(uri):
         d_uri.insert(0, cambio)
         n += 1
         yield f"{n}/{len(o_uri)}"
-
-
-def shuffle_with_groups(ordenadas):
-    # Step 1: Sort the list to group identical items together
-    sorted_list = sorted(ordenadas, key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
-    
-    # Step 2: Group the identical items together
-    groups = [list(group) for key, group in groupby(sorted_list, key=lambda x: x[7][0])]
-    
-    # Step 3: Shuffle the groups themselves
-    random.shuffle(groups)
-    
-    # Step 4: Flatten the list of groups
-    shuffled_list = [item for group in groups for item in group]
-    
-    return shuffled_list
-
-
-def simple_shuffle(ordenadas):
-    random.shuffle(ordenadas)
-    return ordenadas
-
-
-jerarquias = [lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]), None,
-              lambda x: (x[4], x[5], x[6], x[1], x[2]),
-              None]

@@ -5,25 +5,18 @@ from PyQt5.QtWidgets import QApplication
 from frontend.ventana_inicio import VentanaInicio
 from frontend.ventana_ordenadas import VentanaOrdenadas
 
-from backend.funciones import PlaylistMetaData
+from backend.funciones import obtener_playlists, get_playlist_track_file, load_stylesheet
 
-
-#FUNCIONES
-def load_stylesheet(filename):
-    with open(filename, "r") as file:
-        return file.read()
     
 
-def abrir_ordenadas():
+def abrir_ordenadas(indice):
+    playlists = obtener_playlists()
+    ventana_ordenadas.l_nombre.setText(playlists[indice].split(":")[0])
+    ventana_ordenadas.uri = playlists[indice].split(":")[1].strip()
+    ventana_ordenadas.data_file = get_playlist_track_file(ventana_ordenadas.uri)
     if not ventana_ordenadas.isVisible():
         ventana_ordenadas.show()
-#         load_metadata()
-
-
-# def load_metadata():
-#     playlist_metadata = PlaylistMetaData()
-    
-
+    ventana_ordenadas.print_list()
     
 
 if __name__ == '__main__':
@@ -49,8 +42,7 @@ ventana_inicio.show()
 ventana_inicio.t_playlists.clicked.connect(ventana_inicio.activar_botones)
 
 ventana_inicio.b_ordenar.clicked.connect(ventana_ordenadas.clear)
-ventana_inicio.b_ordenar.clicked.connect(lambda: ventana_ordenadas.playlist_elegida(ventana_inicio.seleccion()))
-ventana_inicio.b_ordenar.clicked.connect(abrir_ordenadas)
+ventana_inicio.b_ordenar.clicked.connect(lambda: abrir_ordenadas(ventana_inicio.seleccion()))
 
 ventana_ordenadas.b_ordenar.clicked.connect(lambda: ventana_ordenadas.ordenar())
 ventana_ordenadas.jerarquias.clicked.connect(lambda: ventana_ordenadas.print_list())

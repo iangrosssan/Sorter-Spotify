@@ -1,0 +1,112 @@
+{
+    "0zxj7dVhYZq5ACyaDx5XIo": {
+        "nombre": "Layla - Acoustic Live",
+        "n_disc": 1,
+        "n_track": 7,
+        "album": "Unplugged (Live)",
+        "ano": "1992",
+        "mes": "08",
+        "dia": "25",
+        "artistas": [
+            "Eric Clapton"
+        ],
+        "id": "0zxj7dVhYZq5ACyaDx5XIo",
+        "danceability": 0.559,
+        "energy": 0.524,
+        "speechiness": 0.0462,
+        "acousticness": 0.318,
+        "instrumentalness": 0.00094,
+        "valence": 0.652,
+        "liveness": 0.933,
+        "tempo": 93.85,
+        "mode": 0
+    },
+    "40qXGg5nRbcWzcFb26KWkQ": {
+        "nombre": "Misery - Remastered 2009",
+        "n_disc": 1,
+        "n_track": 2,
+        "album": "Please Please Me (Remastered)",
+        "ano": "1963",
+        "mes": "03",
+        "dia": "22",
+        "artistas": [
+            "The Beatles"
+        ],
+        "id": "40qXGg5nRbcWzcFb26KWkQ",
+        "danceability": 0.591,
+        "energy": 0.605,
+        "speechiness": 0.0413,
+        "acousticness": 0.707,
+        "instrumentalness": 0,
+        "valence": 0.882,
+        "liveness": 0.309,
+        "tempo": 133.348,
+        "mode": 1
+    },
+    "0BowNHHxtXVyLMXxS31LBe": {
+        "nombre": "Love Me Do - 2023 Mix",
+        "n_disc": 1,
+        "n_track": 1,
+        "album": "The Beatles 1962 – 1966 (2023 Edition)",
+        "ano": "2023",
+        "mes": "11",
+        "dia": "10",
+        "artistas": [
+            "The Beatles"
+        ],
+        "id": "0BowNHHxtXVyLMXxS31LBe",
+        "danceability": 0.459,
+        "energy": 0.52,
+        "speechiness": 0.0308,
+        "acousticness": 0.139,
+        "instrumentalness": 0,
+        "valence": 0.733,
+        "liveness": 0.237,
+        "tempo": 142.691,
+        "mode": 1
+    },
+    "6dCq7bLa4j3ZFkOGeUbInk": {
+        "nombre": "Please Please Me - 2023 Mix",
+        "n_disc": 1,
+        "n_track": 2,
+        "album": "The Beatles 1962 – 1966 (2023 Edition)",
+        "ano": "2023",
+        "mes": "11",
+        "dia": "10",
+        "artistas": [
+            "The Beatles"
+        ],
+        "id": "6dCq7bLa4j3ZFkOGeUbInk",
+        "danceability": 0.489,
+        "energy": 0.731,
+        "speechiness": 0.0313,
+        "acousticness": 0.182,
+        "instrumentalness": 0,
+        "valence": 0.839,
+        "liveness": 0.0668,
+        "tempo": 139.64,
+        "mode": 1
+    },
+    "1YQWosTIljIvxAgHWTp7KP": {
+        "nombre": "Take Five",
+        "n_disc": 1,
+        "n_track": 3,
+        "album": "Time Out",
+        "ano": "1959",
+        "mes": "12",
+        "dia": "14",
+        "artistas": [
+            "The Dave Brubeck Quartet"
+        ],
+        "id": "1YQWosTIljIvxAgHWTp7KP",
+        "danceability": 0.454,
+        "energy": 0.26,
+        "speechiness": 0.0401,
+        "acousticness": 0.539,
+        "instrumentalness": 0.00078,
+        "valence": 0.598,
+        "liveness": 0.0675,
+        "tempo": 174.322,
+        "mode": 0
+    }
+}

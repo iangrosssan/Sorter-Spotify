@@ -1,6 +1,7 @@
 import sys
+import os, json
 
-from backend.funciones import obtener_playlists, ordenar_playlist, ordenar_en_app
+from backend.funciones import ordenar_playlist, ordenar_en_app
 from backend.classes import StatsPolygon
 
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
@@ -16,6 +17,7 @@ class VentanaOrdenadas(window_name, base_class):
         super().__init__()
         self.setupUi(self)
         self.uri = ""
+        self.data_file = None
         self.metadata = []
         self.jerarquias.verticalScrollBar().setCursor(Qt.OpenHandCursor)
         self.jerarquias.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
@@ -30,19 +32,12 @@ class VentanaOrdenadas(window_name, base_class):
         self.jerarquias.selectRow(0)
 
 
-    def playlist_elegida(self, indice):
-        playlists = obtener_playlists()
-        self.l_nombre.setText(playlists[indice].split(":")[0])
-        self.uri = playlists[indice].split(":")[1].strip()
-        self.print_list()
-
-
     def print_list(self):
         self.lista_playlists.clear()
         artista = ''
         album = ''
-        tracks, metadata, average = ordenar_playlist(self.uri, self.jerarquias.selectedIndexes()[0].row())
-        for track, track_metadata in zip(tracks, metadata):
+        tracks, track_metadata, average = ordenar_playlist(self.uri, self.jerarquias.selectedIndexes()[0].row())
+        for track in tracks:
             if artista == '':
                 artista = track[7][0]
                 item = QTreeWidgetItem(self.lista_playlists)
@@ -64,16 +59,16 @@ class VentanaOrdenadas(window_name, base_class):
                 item.addChild(item_child)
             item_grandchild = QTreeWidgetItem(self.lista_playlists)
             item_grandchild.setText(0, f"\t{track[0]}")
-            tooltip = f'''<b>Dance:</b> {track_metadata[0]}<br>
-                        <b>Energy:</b> {track_metadata[1]}<br>
-                        <b>Lyrical:</b> {track_metadata[2]}<br>
-                        <b>Acoustic:</b> {track_metadata[3]}<br>
-                        <b>Instrumental:</b> {track_metadata[4]}<br>
-                        <b>Valence:</b> {track_metadata[5]}<br>
-                        <b>Live:</b> {track_metadata[6]}'''
-            item_grandchild.setToolTip(0, tooltip)
+            # tooltip = f'''<b>Dance:</b> {track_metadata[0]}<br>
+            #             <b>Energy:</b> {track_metadata[1]}<br>
+            #             <b>Lyrical:</b> {track_metadata[2]}<br>
+            #             <b>Acoustic:</b> {track_metadata[3]}<br>
+            #             <b>Instrumental:</b> {track_metadata[4]}<br>
+            #             <b>Valence:</b> {track_metadata[5]}<br>
+            #             <b>Live:</b> {track_metadata[6]}'''
+            # item_grandchild.setToolTip(0, tooltip)
             item_child.addChild(item_grandchild)
-        StatsPolygon(self.l_stats, average)
+        # StatsPolygon(self.l_stats, average)
 
     def ordenar(self):
         for i in ordenar_en_app(self.uri):
