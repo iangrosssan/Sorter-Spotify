@@ -53,6 +53,60 @@ def obtener_tracks(uri):
     return tracks
 
 
+def get_track_data(uri, jerarquia):
+    playlist_file_path = get_playlist_track_file(uri)
+    if not os.path.isfile(playlist_file_path):
+        ordenar_playlist(uri, jerarquia)
+
+    with open(playlist_file_path, 'r', encoding='utf-8') as playlist_file:
+        track_metadata = json.load(playlist_file)
+
+    tracks = obtener_tracks(uri)
+    tracks_uri = [track['track']['uri'].split(':')[2] for track in tracks]
+
+    l_tracks = []
+    for uri in tracks_uri:
+        if uri not in track_metadata:
+            continue
+        info_track = []
+        track_name = track_metadata[f'{uri}']['nombre']
+        info_track.append(track_name)
+        track_disc = track_metadata[f'{uri}']['n_disc']
+        info_track.append(track_disc)
+        track_number = track_metadata[f'{uri}']['n_track']
+        info_track.append(track_number)
+        track_album = track_metadata[f'{uri}']['album']
+        info_track.append(track_album)
+        track_year = track_metadata[f'{uri}']['ano']
+        info_track.append(track_year)
+        track_month = track_metadata[f'{uri}']['mes']
+        info_track.append(track_month)
+        track_day = track_metadata[f'{uri}']['dia']
+        info_track.append(track_day)
+        track_artists = track_metadata[f'{uri}']['artistas']
+        info_track.append(track_artists)
+        danceability = track_metadata[f'{uri}']['danceability']
+        info_track.append(danceability)
+        energy = track_metadata[f'{uri}']['energy']
+        info_track.append(energy)
+        speechiness = track_metadata[f'{uri}']['speechiness']
+        info_track.append(speechiness)
+        acousticness = track_metadata[f'{uri}']['acousticness']
+        info_track.append(acousticness)
+        instrumentalness = track_metadata[f'{uri}']['instrumentalness']
+        info_track.append(instrumentalness)
+        valence = track_metadata[f'{uri}']['valence']
+        info_track.append(valence)
+        liveness = track_metadata[f'{uri}']['liveness']
+        info_track.append(liveness)
+        tempo = track_metadata[f'{uri}']['tempo']
+        info_track.append(tempo)
+        mode = track_metadata[f'{uri}']['mode']
+        info_track.append(mode)
+        l_tracks.append(info_track)
+    return l_tracks
+        
+
 # Sorter
 def ordenar_playlist(uri, jerarquia):
     ordenadas = []
@@ -63,43 +117,24 @@ def ordenar_playlist(uri, jerarquia):
     open('backend/o_uri.csv', 'w').close()
 
     for i in obtener_tracks(uri):
-        info_cancion = []
-
-        nombre = i['track']['name']
-        info_cancion.append(nombre) #0
-                
-        n_disc = i['track']['disc_number']
-        info_cancion.append(n_disc) #1
-        
-        n_track = i['track']['track_number']
-        info_cancion.append(n_track) #2
-        
-        album = i['track']['album']['name']
-        info_cancion.append(album) #3
-        
-        ano = i['track']['album']['release_date'][:4]
-        info_cancion.append(ano) #4
-        
-        mes = i['track']['album']['release_date'][5:7]
-        info_cancion.append(mes) #5
-        
-        dia = i['track']['album']['release_date'][8:10]
-        info_cancion.append(dia) #6
-        
-        artistas = []
-        for j in i['track']['artists']:
-            artistas.append(j['name'])
-        info_cancion.append(artistas) #7
-        
         track_uri = i['track']['uri'].split(':')[2]
-        info_cancion.append(track_uri)
-        ordenadas.append(info_cancion)
         with open('backend/d_uri.csv', 'a') as d_uri:
             d_uri.write(f"{track_uri};")
 
         # Playlist Metadata Info
-        track_id = i['track']['id']
+        nombre = i['track']['name']
+        n_disc = i['track']['disc_number']
+        n_track = i['track']['track_number']
+        album = i['track']['album']['name']
+        ano = i['track']['album']['release_date'][:4]
+        mes = i['track']['album']['release_date'][5:7]
+        dia = i['track']['album']['release_date'][8:10]
+        artistas = []
+        for j in i['track']['artists']:
+            artista = j['name']
+            artistas.append(artista)
 
+        track_id = i['track']['id']
         danceability = sp2.audio_features(track_id)[0]['danceability']
         energy = sp2.audio_features(track_id)[0]['energy']
         speechiness = sp2.audio_features(track_id)[0]['speechiness']

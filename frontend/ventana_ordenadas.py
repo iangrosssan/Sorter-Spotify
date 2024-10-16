@@ -1,7 +1,7 @@
 import sys
 import os, json
 
-from backend.funciones import ordenar_playlist, ordenar_en_app
+from backend.funciones import ordenar_playlist, ordenar_en_app, get_track_data
 from backend.classes import StatsPolygon
 
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
@@ -36,8 +36,8 @@ class VentanaOrdenadas(window_name, base_class):
         self.lista_playlists.clear()
         artista = ''
         album = ''
-        tracks, track_metadata, average = ordenar_playlist(self.uri, self.jerarquias.selectedIndexes()[0].row())
-        for track in tracks:
+        tracks_data = get_track_data(self.uri, self.jerarquias.selectedIndexes()[0].row())
+        for track in tracks_data:
             if artista == '':
                 artista = track[7][0]
                 item = QTreeWidgetItem(self.lista_playlists)
