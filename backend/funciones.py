@@ -2,11 +2,6 @@ import os, json
 
 from backend.spotify_call import obtener_tracks, get_metadata
 
-# Stylesheet
-def load_stylesheet(filename):
-    with open(filename, "r") as file:
-        return file.read()
-
 
 # JSON playlists
 def guardar_playlists(playlists):

@@ -5,10 +5,22 @@ from PyQt5.QtWidgets import QApplication
 from frontend.ventana_inicio import VentanaInicio
 from frontend.ventana_ordenadas import VentanaOrdenadas
 
-from backend.funciones import get_playlist_track_file, load_stylesheet, guardar_playlists
+from backend.funciones import get_playlist_track_file, guardar_playlists
 from backend.spotify_call import obtener_playlists
     
 
+if __name__ == '__main__':
+    def hook(type, traceback):
+        print(type)
+        print(traceback)
+    sys.__excepthook__ = hook
+    app = QApplication([])
+    with open("frontend/styles.qss", "r") as file:
+        stylesheet = file.read()
+        app.setStyleSheet(stylesheet)
+
+
+# FUNCIONES
 def abrir_ordenadas(indice):
     playlists = obtener_playlists()
     guardar_playlists(playlists)
@@ -18,17 +30,6 @@ def abrir_ordenadas(indice):
     if not ventana_ordenadas.isVisible():
         ventana_ordenadas.show()
     ventana_ordenadas.print_list()
-    
-
-if __name__ == '__main__':
-    def hook(type, traceback):
-        print(type)
-        print(traceback)
-    sys.__excepthook__ = hook
-    app = QApplication([])
-    stylesheet = load_stylesheet("frontend/styles.qss")
-    app.setStyleSheet(stylesheet)
-
 
 
 # INSTANCIAS
