@@ -5,12 +5,13 @@ from PyQt5.QtWidgets import QApplication
 from frontend.ventana_inicio import VentanaInicio
 from frontend.ventana_ordenadas import VentanaOrdenadas
 
-from backend.funciones import obtener_playlists, get_playlist_track_file, load_stylesheet
-
+from backend.funciones import get_playlist_track_file, load_stylesheet, guardar_playlists
+from backend.spotify_call import obtener_playlists
     
 
 def abrir_ordenadas(indice):
     playlists = obtener_playlists()
+    guardar_playlists(playlists)
     ventana_ordenadas.l_nombre.setText(playlists[indice].split(":")[0])
     ventana_ordenadas.uri = playlists[indice].split(":")[1].strip()
     ventana_ordenadas.data_file = get_playlist_track_file(ventana_ordenadas.uri)

@@ -5,58 +5,6 @@ import sys
 import math
 
 
-class PlaylistMetaData:
-    def __init__(self):
-        # Initialize cumulative sums and counts for track features
-        self.total_danceability = 0
-        self.total_energy = 0
-        self.total_speechiness = 0
-        self.total_acousticness = 0
-        self.total_instrumentalness = 0
-        self.total_valence = 0
-        self.total_liveness = 0
-        self.total_tempo = 0
-        self.total_mode = 0
-        self.track_count = 0
-    
-    def add_track(self, track_metadata):
-        """Adds a track and updates cumulative sums and count."""
-        self.total_danceability += track_metadata[0]
-        self.total_energy += track_metadata[1]
-        self.total_speechiness += track_metadata[2]
-        self.total_acousticness += track_metadata[3]
-        self.total_instrumentalness += track_metadata[4]
-        self.total_valence += track_metadata[5]
-        self.total_liveness += track_metadata[6]
-        self.total_tempo += track_metadata[7]
-        self.total_mode += track_metadata[8]
-        self.track_count += 1
-    
-    def get_average_features(self):
-        """Returns the average values for all the features."""
-        if self.track_count == 0:
-            return None
-        
-        avg_danceability = round(self.total_danceability / self.track_count, 2)
-        avg_energy = round(self.total_energy / self.track_count, 2)
-        avg_speechiness = round(self.total_speechiness / self.track_count, 2)
-        avg_acousticness = round(self.total_acousticness / self.track_count, 2)
-        avg_instrumentalness = round(self.total_instrumentalness / self.track_count, 2)
-        avg_valence = round(self.total_valence / self.track_count, 2)
-        avg_liveness = round(self.total_liveness / self.track_count, 2)
-        avg_tempo = round(self.total_tempo / self.track_count, 2)
-        avg_mode = round(self.total_mode / self.track_count, 2)
-        
-        return {
-            'Dance': avg_danceability,
-            'Energy': avg_energy,
-            'Lyrical': avg_speechiness,
-            'Acoustic': avg_acousticness,
-            'Instrumental': avg_instrumentalness,
-            'Valence': avg_valence
-        }
-
-
 class StatsPolygon:
     def __init__(self, label, stats):
         """
@@ -80,7 +28,20 @@ class StatsPolygon:
 
         # Set the fixed radius for the chart
         radius = 100  # Radius of the chart
-        center = QPointF(140, 160)  # Center of the chart in the 300x300 image
+        center = QPointF(155, 160)  # Center of the chart in the 300x300 image
+
+                # Draw the maximum polygon (outline for value = 1)
+        max_polygon = QPolygonF()
+        for i in range(num_stats):
+            point = QPointF(
+                center.x() + radius * math.cos(i * angle),
+                center.y() - radius * math.sin(i * angle)
+            )
+            max_polygon.append(point)
+
+        # Draw the outline polygon for the maximum possible values (value = 1)
+        painter.setPen(QPen(QColor(200, 200, 200, 50), 2))  # White color for the outline
+        painter.drawPolygon(max_polygon)
 
         # Apply ListView style to the polygon and axes
         painter.setPen(QPen(Qt.white, 3))  # White text color for axes lines and polygon outline
@@ -99,15 +60,29 @@ class StatsPolygon:
         painter.setPen(Qt.NoPen)  # No outline
         painter.drawPolygon(polygon)
 
-        # Optionally draw stat names around the polygon (font color from ListView style)
+                # Set the font for the text labels
         painter.setPen(QColor(255, 255, 255))  # White color for the stat labels
+        font_metrics = painter.fontMetrics()  # Get QFontMetrics to measure text size
 
         for i, stat in enumerate(self.stats.keys()):
+            # Calculate the position for the text (radius + 15 to leave some space from the polygon)
             text_point = QPointF(
-                center.x() + (radius + 15) * math.cos(i * angle),
+                center.x() + (radius + 25) * math.cos(i * angle),
                 center.y() - (radius + 15) * math.sin(i * angle)
             )
-            painter.drawText(text_point, stat)
+
+            # Calculate the width and height of the text using QFontMetrics
+            text_width = font_metrics.horizontalAdvance(stat)
+            text_height = font_metrics.height()
+
+            # Shift the text to center it horizontally and vertically
+            shifted_point = QPointF(
+                text_point.x() - text_width / 2,  # Shift left by half the text width
+                text_point.y() + text_height / 4  # Shift up by half the text height
+            )
+
+            # Draw the text at the adjusted position
+            painter.drawText(shifted_point, stat)
 
         painter.end()
 

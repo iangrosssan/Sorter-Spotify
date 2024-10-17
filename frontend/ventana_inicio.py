@@ -1,6 +1,6 @@
 import sys
 
-from backend.funciones import obtener_playlists
+from backend.spotify_call import obtener_playlists
 
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import Qt

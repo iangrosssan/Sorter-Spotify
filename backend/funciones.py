@@ -1,37 +1,11 @@
-import spotipy
-import spotipy.util as util
 import os, json
 
-from backend.classes import PlaylistMetaData
-from backend.sorters import shuffle_with_groups, simple_shuffle, jerarquias
-
-
-# Credenciales
-with open("backend/credenciales.csv", "r") as archivo:
-    linea = archivo.readlines()
-    cid = linea[0].split(',')[0]
-    secret = linea[0].split(',')[1]
-    user = linea[0].split(',')[2].strip()
-redirect_uri = 'http://localhost:8888/callback'
-scope = 'playlist-modify-public playlist-modify-private'
-
-token = util.prompt_for_user_token(client_id=cid, client_secret=secret, redirect_uri=redirect_uri, scope=scope)
-sp2 = spotipy.Spotify(auth=token)
-
+from backend.spotify_call import obtener_tracks, get_metadata
 
 # Stylesheet
 def load_stylesheet(filename):
     with open(filename, "r") as file:
         return file.read()
-
-
-# Spotify call playlists
-def obtener_playlists():
-    playlists = []
-    for i in sp2.user_playlists(user)['items']:
-        playlists.append(f"{i['name']}:{i['id']}")
-    guardar_playlists(playlists)
-    return playlists
 
 
 # JSON playlists
@@ -43,20 +17,10 @@ def guardar_playlists(playlists):
         json.dump(playlists, jsonfile, ensure_ascii=False, indent=4)
 
 
-# Spotify call tracks
-def obtener_tracks(uri):
-    results = sp2.user_playlist_tracks(user,playlist_id=uri)
-    tracks = results['items']
-    while results['next']:
-        results = sp2.next(results)
-        tracks.extend(results['items'])
-    return tracks
-
-
-def get_track_data(uri, jerarquia):
+def get_track_data(uri):
     playlist_file_path = get_playlist_track_file(uri)
     if not os.path.isfile(playlist_file_path):
-        ordenar_playlist(uri, jerarquia)
+        create_playlist_json(uri)
 
     with open(playlist_file_path, 'r', encoding='utf-8') as playlist_file:
         track_metadata = json.load(playlist_file)
@@ -69,6 +33,7 @@ def get_track_data(uri, jerarquia):
         if uri not in track_metadata:
             continue
         info_track = []
+        info_track.append(uri)
         track_name = track_metadata[f'{uri}']['nombre']
         info_track.append(track_name)
         track_disc = track_metadata[f'{uri}']['n_disc']
@@ -105,21 +70,31 @@ def get_track_data(uri, jerarquia):
         info_track.append(mode)
         l_tracks.append(info_track)
     return l_tracks
-        
+
+
+def average_metadata(tracks_data):
+    danceability = sum([track[9] for track in tracks_data]) / len(tracks_data)
+    energy = sum([track[10] for track in tracks_data]) / len(tracks_data)
+    speechiness = sum([track[11] for track in tracks_data]) / len(tracks_data)
+    acousticness = sum([track[12] for track in tracks_data]) / len(tracks_data)
+    instrumentalness = sum([track[13] for track in tracks_data]) / len(tracks_data)
+    valence = sum([track[14] for track in tracks_data]) / len(tracks_data)
+    dict_stats = {
+        'dance': danceability,
+        'energy': energy,
+        'lyrical': speechiness,
+        'acoustic': acousticness,
+        'instrumental': instrumentalness,
+        'valence': valence,
+    }
+    return dict_stats
+
+
 
 # Sorter
-def ordenar_playlist(uri, jerarquia):
-    ordenadas = []
-    metadata_old = []
-    playlist_metadata = PlaylistMetaData()
-
-    open('backend/d_uri.csv', 'w').close()
-    open('backend/o_uri.csv', 'w').close()
-
+def create_playlist_json(uri):
     for i in obtener_tracks(uri):
         track_uri = i['track']['uri'].split(':')[2]
-        with open('backend/d_uri.csv', 'a') as d_uri:
-            d_uri.write(f"{track_uri};")
 
         # Playlist Metadata Info
         nombre = i['track']['name']
@@ -135,15 +110,8 @@ def ordenar_playlist(uri, jerarquia):
             artistas.append(artista)
 
         track_id = i['track']['id']
-        danceability = sp2.audio_features(track_id)[0]['danceability']
-        energy = sp2.audio_features(track_id)[0]['energy']
-        speechiness = sp2.audio_features(track_id)[0]['speechiness']
-        acousticness = sp2.audio_features(track_id)[0]['acousticness']
-        instrumentalness = sp2.audio_features(track_id)[0]['instrumentalness']
-        valence = sp2.audio_features(track_id)[0]['valence']
-        liveness = sp2.audio_features(track_id)[0]['liveness'] # Flag live tracks
-        tempo = sp2.audio_features(track_id)[0]['tempo'] # Custom Order
-        mode = sp2.audio_features(track_id)[0]['mode'] # Custom Order
+        danceability, energy, speechiness, acousticness, instrumentalness,valence, liveness, tempo, mode = get_metadata(track_id)
+
         
         track_metadata = {
             track_uri: {
@@ -169,26 +137,7 @@ def ordenar_playlist(uri, jerarquia):
         }
 
         add_tracks_to_playlist(uri, track_metadata)
-        
 
-        track_metadata_old = [danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode]
-        metadata_old.append(track_metadata_old)
-        playlist_metadata.add_track(track_metadata_old)
-
-
-    if jerarquia == 1:
-        ordenadas = shuffle_with_groups(ordenadas)
-    elif jerarquia == 3:
-        ordenadas = simple_shuffle(ordenadas)
-    else:
-        key = jerarquias[jerarquia]
-        ordenadas.sort(key=key)
-    #ordenadas.sort(key=lambda x: (x[7][0], x[4], x[5], x[6], x[1], x[2]))
-                                # Artista, año,  mes,  dia, disco, track
-    for i in ordenadas:
-        with open('backend/o_uri.csv', 'a') as o_uri:
-            o_uri.write(f"{i[8]};")
-    return ordenadas, metadata_old, playlist_metadata.get_average_features()
 
 
 # JSON load playlists
@@ -247,19 +196,3 @@ def add_tracks_to_playlist(playlist_uri, track_metadata, master_file_path='backe
         json.dump(existing_tracks, playlist_file, ensure_ascii=False, indent=4)
     
     print(f"Tracks added to {playlists[playlist_uri]['name']}.")
-
-
-
-def ordenar_en_app(uri):
-    ordenadas = open('backend/o_uri.csv', 'r')
-    o_uri = ordenadas.readline().split(';')[:-1]
-    ordenadas.close()
-    desordenadas = open('backend/d_uri.csv', 'r+')
-    d_uri = desordenadas.readline().split(';')[:-1]
-    n = 0
-    for n_uri in o_uri:
-        sp2.user_playlist_reorder_tracks(user,playlist_id=uri,range_start=d_uri.index(n_uri), insert_before=n)
-        cambio = d_uri.pop(d_uri.index(n_uri))
-        d_uri.insert(0, cambio)
-        n += 1
-        yield f"{n}/{len(o_uri)}"
