@@ -33,15 +33,16 @@ def obtener_tracks(uri):
 
 
 def get_metadata(track_id):
-    danceability = sp2.audio_features(track_id)[0]['danceability']
-    energy = sp2.audio_features(track_id)[0]['energy']
-    speechiness = sp2.audio_features(track_id)[0]['speechiness']
-    acousticness = sp2.audio_features(track_id)[0]['acousticness']
-    instrumentalness = sp2.audio_features(track_id)[0]['instrumentalness']
-    valence = sp2.audio_features(track_id)[0]['valence']
-    liveness = sp2.audio_features(track_id)[0]['liveness'] # Flag live tracks
-    tempo = sp2.audio_features(track_id)[0]['tempo'] # Custom Order
-    mode = sp2.audio_features(track_id)[0]['mode'] # Custom Order
+    metadata = sp2.audio_features(track_id)[0]
+    danceability = metadata['danceability']
+    energy = metadata['energy']
+    speechiness = metadata['speechiness']
+    acousticness = metadata['acousticness']
+    instrumentalness = metadata['instrumentalness']
+    valence = metadata['valence']
+    liveness = metadata['liveness'] # Flag live tracks
+    tempo = metadata['tempo'] # Custom Order
+    mode = metadata['mode'] # Custom Order
     return danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode
 
 
