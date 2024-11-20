@@ -49,8 +49,6 @@ def get_track_data(uri):
         info_track.append(danceability)
         energy = track_metadata[f'{uri}']['energy']
         info_track.append(energy)
-        speechiness = track_metadata[f'{uri}']['speechiness']
-        info_track.append(speechiness)
         acousticness = track_metadata[f'{uri}']['acousticness']
         info_track.append(acousticness)
         instrumentalness = track_metadata[f'{uri}']['instrumentalness']
@@ -70,14 +68,12 @@ def get_track_data(uri):
 def average_metadata(tracks_data):
     danceability = sum([track[9] for track in tracks_data]) / len(tracks_data)
     energy = sum([track[10] for track in tracks_data]) / len(tracks_data)
-    speechiness = sum([track[11] for track in tracks_data]) / len(tracks_data)
     acousticness = sum([track[12] for track in tracks_data]) / len(tracks_data)
     instrumentalness = sum([track[13] for track in tracks_data]) / len(tracks_data)
     valence = sum([track[14] for track in tracks_data]) / len(tracks_data)
     dict_stats = {
         'dance': danceability,
         'energy': energy,
-        'lyrical': speechiness,
         'acoustic': acousticness,
         'instrumental': instrumentalness,
         'valence': valence,
@@ -105,7 +101,7 @@ def create_playlist_json(uri):
             artistas.append(artista)
 
         track_id = i['track']['id']
-        danceability, energy, speechiness, acousticness, instrumentalness,valence, liveness, tempo, mode = get_metadata(track_id)
+        danceability, energy, acousticness, instrumentalness,valence, liveness, tempo, mode = get_metadata(track_id)
 
         
         track_metadata = {
@@ -121,7 +117,6 @@ def create_playlist_json(uri):
                 'id': track_id,
                 'danceability': danceability,
                 'energy': energy,
-                'speechiness': speechiness,
                 'acousticness': acousticness,
                 'instrumentalness': instrumentalness,
                 'valence': valence,

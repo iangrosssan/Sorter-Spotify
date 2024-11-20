@@ -1,5 +1,6 @@
 import spotipy
 import spotipy.util as util
+import numpy as np
 
 # Credenciales
 with open("backend/credenciales.csv", "r") as archivo:
@@ -36,14 +37,13 @@ def get_metadata(track_id):
     metadata = sp2.audio_features(track_id)[0]
     danceability = metadata['danceability']
     energy = metadata['energy']
-    speechiness = metadata['speechiness']
     acousticness = metadata['acousticness']
     instrumentalness = metadata['instrumentalness']
     valence = metadata['valence']
     liveness = metadata['liveness'] # Flag live tracks
     tempo = metadata['tempo'] # Custom Order
     mode = metadata['mode'] # Custom Order
-    return danceability, energy, speechiness, acousticness, instrumentalness, valence, liveness, tempo, mode
+    return danceability, energy, acousticness, instrumentalness, valence, liveness, tempo, mode
 
 
 def ordenar_en_app(uri):
