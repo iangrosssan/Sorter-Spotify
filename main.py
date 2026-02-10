@@ -1,17 +1,19 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication
+from PyQt5.QtGui import QFont
 
 from frontend.ventana_inicio import VentanaInicio
 from frontend.ventana_ordenadas import VentanaOrdenadas
 
 from backend.funciones import get_playlist_track_file, guardar_playlists
-from backend.spotify_call import obtener_playlists
+from backend.spotify_call import SpotifyClient
     
 
 if __name__ == '__main__':
-    def hook(type, traceback):
+    def hook(type, value, traceback):
         print(type)
+        print(value)
         print(traceback)
     sys.__excepthook__ = hook
     app = QApplication([])
@@ -22,7 +24,8 @@ if __name__ == '__main__':
 
 # FUNCIONES
 def abrir_ordenadas(indice):
-    playlists = obtener_playlists()
+    client = SpotifyClient.get_instance()
+    playlists = client.get_user_playlists()
     guardar_playlists(playlists)
     ventana_ordenadas.l_nombre.setText(playlists[indice].split(":")[0])
     ventana_ordenadas.uri = playlists[indice].split(":")[1].strip()

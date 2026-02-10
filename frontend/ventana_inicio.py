@@ -1,6 +1,6 @@
 import sys
 
-from backend.spotify_call import obtener_playlists
+from backend.spotify_call import SpotifyClient
 
 from PyQt5.QtWidgets import QApplication, QTableWidgetItem, QHeaderView
 from PyQt5.QtCore import Qt
@@ -23,7 +23,8 @@ class VentanaInicio(window_name, base_class):
         self.t_playlists.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
     
     def actualizar(self):
-        playlists = obtener_playlists()
+        client = SpotifyClient.get_instance()
+        playlists = client.get_user_playlists()
         self.t_playlists.setRowCount(len(playlists))
         for i in range(len(playlists)):
             self.t_playlists.setItem(i,0,QTableWidgetItem(playlists[i].split(":")[0]))

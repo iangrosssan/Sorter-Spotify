@@ -1,9 +1,7 @@
-from PyQt5.QtWidgets import QLabel, QApplication, QWidget
+from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPainter, QPen, QPolygonF, QPixmap, QBrush, QColor
 from PyQt5.QtCore import QPointF, Qt
-import sys
 import math
-
 
 class StatsPolygon:
     def __init__(self, label, stats):
@@ -24,13 +22,17 @@ class StatsPolygon:
 
         # Set the number of axes (equal to the number of stats)
         num_stats = len(self.stats)
+        if num_stats == 0:
+            painter.end()
+            return
+
         angle = 2 * math.pi / num_stats
 
         # Set the fixed radius for the chart
         radius = 100  # Radius of the chart
         center = QPointF(155, 160)  # Center of the chart in the 300x300 image
 
-                # Draw the maximum polygon (outline for value = 1)
+        # Draw the maximum polygon (outline for value = 1)
         max_polygon = QPolygonF()
         for i in range(num_stats):
             point = QPointF(
@@ -60,12 +62,12 @@ class StatsPolygon:
         painter.setPen(Qt.NoPen)  # No outline
         painter.drawPolygon(polygon)
 
-                # Set the font for the text labels
+        # Set the font for the text labels
         painter.setPen(QColor(255, 255, 255))  # White color for the stat labels
         font_metrics = painter.fontMetrics()  # Get QFontMetrics to measure text size
 
         for i, stat in enumerate(self.stats.keys()):
-            # Calculate the position for the text (radius + 15 to leave some space from the polygon)
+            # Calculate the position for the text (radius + 25 to leave some space from the polygon)
             text_point = QPointF(
                 center.x() + (radius + 25) * math.cos(i * angle),
                 center.y() - (radius + 15) * math.sin(i * angle)

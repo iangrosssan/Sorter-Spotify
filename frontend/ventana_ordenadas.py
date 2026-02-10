@@ -3,8 +3,8 @@ import os, json
 
 from backend.funciones import get_track_data, average_metadata
 from backend.sorters import sort_tracks
-from backend.spotify_call import ordenar_en_app
-from backend.classes import StatsPolygon
+from backend.spotify_call import SpotifyClient
+from frontend.components import StatsPolygon
 
 from PyQt5.QtWidgets import QApplication, QTreeWidgetItem
 from PyQt5.QtCore import Qt
@@ -21,6 +21,7 @@ class VentanaOrdenadas(window_name, base_class):
         self.uri = ""
         self.data_file = None
         self.metadata = []
+        self.sorted_data = [] # Store sorted data for access in ordenar()
         self.jerarquias.verticalScrollBar().setCursor(Qt.OpenHandCursor)
         self.jerarquias.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
         self.jerarquias.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
@@ -40,8 +41,11 @@ class VentanaOrdenadas(window_name, base_class):
         album = ''
         tracks_data = get_track_data(self.uri)
         self.stats = average_metadata(tracks_data)
-        tracks_data = sort_tracks(tracks_data, self.jerarquias.selectedIndexes()[0].row())
-        for track in tracks_data:
+        
+        # Sort and store
+        self.sorted_data = sort_tracks(tracks_data, self.jerarquias.selectedIndexes()[0].row())
+        
+        for track in self.sorted_data:
             if artista == '':
                 artista = track[8][0]
                 item = QTreeWidgetItem(self.lista_playlists)
@@ -75,10 +79,23 @@ class VentanaOrdenadas(window_name, base_class):
         StatsPolygon(self.l_stats, self.stats)
 
     def ordenar(self):
-        for i in ordenar_en_app(self.uri):
-            actual = int(i.split("/")[0])
+        if not self.sorted_data:
+            return
+
+        client = SpotifyClient.get_instance()
+        
+        # We need the current URI list to know where to move things FROM
+        # This fetching might take a moment, but it ensures accuracy
+        current_tracks = client.get_playlist_tracks(self.uri)
+        current_uris = [t['track']['uri'].split(':')[2] for t in current_tracks if t['track']]
+        
+        ordered_uris = [t[0] for t in self.sorted_data]
+        
+        # Generator yields progress strings like "1/100"
+        for progress in client.reorder_playlist(self.uri, ordered_uris, current_uris):
+            actual = int(progress.split("/")[0])
             if actual == 1:
-                total = int(i.split("/")[1])
+                total = int(progress.split("/")[1])
                 self.progressBar.setMaximum(total)
             self.progressBar.setValue(actual)
 
