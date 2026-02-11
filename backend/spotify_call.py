@@ -33,17 +33,34 @@ def obtener_tracks(uri):
     return tracks
 
 
+from spotipy.exceptions import SpotifyException
+
+class FeatureRetrievalError(Exception):
+    pass
+
 def get_metadata(track_id):
-    metadata = sp2.audio_features(track_id)[0]
-    danceability = metadata['danceability']
-    energy = metadata['energy']
-    acousticness = metadata['acousticness']
-    instrumentalness = metadata['instrumentalness']
-    valence = metadata['valence']
-    liveness = metadata['liveness'] # Flag live tracks
-    tempo = metadata['tempo'] # Custom Order
-    mode = metadata['mode'] # Custom Order
-    return danceability, energy, acousticness, instrumentalness, valence, liveness, tempo, mode
+    try:
+        features = sp2.audio_features(track_id)
+        if features and features[0]:
+            metadata = features[0]
+            danceability = metadata['danceability']
+            energy = metadata['energy']
+            acousticness = metadata['acousticness']
+            instrumentalness = metadata['instrumentalness']
+            valence = metadata['valence']
+            liveness = metadata['liveness'] # Flag live tracks
+            tempo = metadata['tempo'] # Custom Order
+            mode = metadata['mode'] # Custom Order
+            return danceability, energy, acousticness, instrumentalness, valence, liveness, tempo, mode
+    except SpotifyException as e:
+        if e.http_status == 403:
+            raise FeatureRetrievalError("Spotify API 403: Cannot get audio features for this track/playlist.")
+        print(f"Spotify Error fetching metadata for {track_id}: {e}")
+    except Exception as e:
+        print(f"Error fetching metadata for {track_id}: {e}")
+    
+    # Return defaults if error or no data
+    return 0, 0, 0, 0, 0, 0, 0, 0
 
 
 def ordenar_en_app(uri):

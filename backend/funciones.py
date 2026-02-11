@@ -84,7 +84,12 @@ def average_metadata(tracks_data):
 
 # Sorter
 def create_playlist_json(uri):
-    for i in obtener_tracks(uri):
+    from backend.spotify_call import FeatureRetrievalError # Import here to avoid circular dependency if any, or just convenience
+
+    tracks = obtener_tracks(uri)
+    skip_audio_features = False
+
+    for i in tracks:
         track_uri = i['track']['uri'].split(':')[2]
 
         # Playlist Metadata Info
@@ -101,8 +106,16 @@ def create_playlist_json(uri):
             artistas.append(artista)
 
         track_id = i['track']['id']
-        danceability, energy, acousticness, instrumentalness,valence, liveness, tempo, mode = get_metadata(track_id)
+        
+        danceability, energy, acousticness, instrumentalness, valence, liveness, tempo, mode = 0, 0, 0, 0, 0, 0, 0, 0
 
+        if not skip_audio_features:
+            try:
+                danceability, energy, acousticness, instrumentalness, valence, liveness, tempo, mode = get_metadata(track_id)
+            except FeatureRetrievalError:
+                print(f"Skipping audio features for playlist {uri} due to API restriction.")
+                skip_audio_features = True
+                # Defaults are already set to 0
         
         track_metadata = {
             track_uri: {

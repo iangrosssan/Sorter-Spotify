@@ -1,4 +1,5 @@
 import sys
+import os
 
 from PyQt5.QtWidgets import QApplication
 
@@ -9,13 +10,25 @@ from backend.funciones import get_playlist_track_file, guardar_playlists
 from backend.spotify_call import obtener_playlists
     
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 if __name__ == '__main__':
     def hook(type, traceback):
         print(type)
         print(traceback)
     sys.__excepthook__ = hook
     app = QApplication([])
-    with open("frontend/styles.qss", "r") as file:
+    
+    style_path = resource_path("frontend/styles.qss")
+    with open(style_path, "r") as file:
         stylesheet = file.read()
         app.setStyleSheet(stylesheet)
 
