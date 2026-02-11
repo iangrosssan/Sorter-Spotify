@@ -28,10 +28,16 @@ class VentanaOrdenadas(window_name, base_class):
         self.lista_playlists.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
         self.lista_playlists.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
 
+        # Fashion Emergency
+        self.jerarquias.item(3, 0).setText("Fashion Emergency")
+
 
     def clear(self):
         self.progressBar.setValue(0)
         self.jerarquias.selectRow(0)
+        self.progressBar.setFormat("%p%") # Reset format
+        self.progressBar.setStyleSheet("") # Reset style
+        self.l_nombre.setText(self.uri.split(":")[0] if self.uri else "") # Reset title if needed, though usually handled by opening logic
 
 
     def print_list(self):
@@ -39,8 +45,18 @@ class VentanaOrdenadas(window_name, base_class):
         artista = ''
         album = ''
         tracks_data = get_track_data(self.uri)
+        
+        # Initialize progress bar
+        self.progressBar.setMaximum(len(tracks_data))
+        self.progressBar.setValue(0)
+        self.progressBar.setFormat("%v/%m")
+
         self.stats = average_metadata(tracks_data)
-        tracks_data = sort_tracks(tracks_data, self.jerarquias.selectedIndexes()[0].row())
+        if self.jerarquias.selectedIndexes():
+            tracks_data = sort_tracks(tracks_data, self.jerarquias.selectedIndexes()[0].row())
+        else:
+            tracks_data = sort_tracks(tracks_data, 0) # Default
+
         for track in tracks_data:
             if artista == '':
                 artista = track[8][0]
@@ -75,12 +91,42 @@ class VentanaOrdenadas(window_name, base_class):
         StatsPolygon(self.l_stats, self.stats)
 
     def ordenar(self):
+        self.progressBar.setFormat("%v/%m")
+        original_style = self.progressBar.styleSheet()
+        
+        is_fashion_emergency = False
+        if self.jerarquias.selectedIndexes() and self.jerarquias.selectedIndexes()[0].row() == 3:
+            is_fashion_emergency = True
+            # Immersive Fashion Emergency Style
+            self.progressBar.setStyleSheet("""
+                QProgressBar {
+                    border: 2px solid rgb(255, 20, 147);
+                    border-radius: 10px;
+                    background-color: rgb(20, 20, 20);
+                    text-align: center;
+                    font: bold 14pt "Comic Sans MS";
+                    color: rgb(255, 105, 180);
+                }
+                QProgressBar::chunk {
+                    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 20, 147, 255), stop:1 rgba(0, 255, 255, 255));
+                    border-radius: 10px;
+                }
+            """)
+            QApplication.processEvents()
+        else:
+            self.progressBar.setStyleSheet("")
+
         for i in ordenar_en_app(self.uri):
             actual = int(i.split("/")[0])
             if actual == 1:
                 total = int(i.split("/")[1])
                 self.progressBar.setMaximum(total)
             self.progressBar.setValue(actual)
+            QApplication.processEvents()
+            
+        if is_fashion_emergency:
+             # Maybe leave it for a moment or show completion?
+             pass
 
 
     def on_slider_pressed(self):
