@@ -1,6 +1,6 @@
 # 🎵 Sorter Spotify
 
-**Sorter Spotify** is a powerful desktop application that allows you to organize your Spotify playlists based on various audio features. Whether you want to sort by energy, danceability, or acousticness, this tool gives you control over your listening experience.
+**Sorter Spotify** is a desktop application that allows you to organize your Spotify playlists based on various audio features. Whether you want to sort by energy, danceability, or acousticness, this tool gives you control over your listening experience.
 
 ## ✨ Features
 
