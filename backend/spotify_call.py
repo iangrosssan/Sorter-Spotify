@@ -2,6 +2,66 @@ import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 from backend.config import Config
 
+class MockSpotifyClient:
+    _instance = None
+    
+    def __init__(self):
+        self.user_id = "demo_user"
+
+    @classmethod
+    def get_instance(cls):
+        if cls._instance is None:
+            cls._instance = cls()
+        return cls._instance
+
+    def get_user_playlists(self):
+        from backend.funciones import load_master_file
+        playlists_data = load_master_file()
+        if not playlists_data:
+            return []
+        
+        playlists = []
+        for uri, data in playlists_data.items():
+            playlists.append(f"{data['name']}:{uri}")
+        return playlists
+
+    def get_playlist_tracks(self, playlist_id):
+        import json
+        import os
+        from backend.funciones import get_playlist_track_file
+        
+        file_path = get_playlist_track_file(playlist_id)
+        if not file_path or not os.path.exists(file_path):
+            return []
+            
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            
+        tracks = []
+        for track_id, meta in data.items():
+            tracks.append({
+                "track": {
+                    "id": track_id,
+                    "uri": f"spotify:track:{track_id}",
+                    "name": meta["nombre"],
+                    "artists": [{"name": a} for a in meta["artistas"]],
+                    "album": {"name": meta["album"], "release_date": f'{meta["ano"]}-{meta["mes"]}-{meta["dia"]}'},
+                    "disc_number": meta["n_disc"],
+                    "track_number": meta["n_track"],
+                }
+            })
+        return tracks
+
+    def get_audio_features_batch(self, track_ids):
+        return [{"danceability": 0, "energy": 0, "acousticness": 0, "instrumentalness": 0, "valence": 0, "liveness": 0, "tempo": 0, "mode": 0}] * len(track_ids)
+
+    def reorder_playlist(self, playlist_id, ordered_uris, current_uris):
+        import time
+        for i in range(len(ordered_uris)):
+            time.sleep(0.01) # Simulate network delay for UI progress bar
+            yield f"{i+1}/{len(ordered_uris)}"
+
+
 class SpotifyClient:
     _instance = None
     
@@ -20,6 +80,8 @@ class SpotifyClient:
 
     @classmethod
     def get_instance(cls):
+        if Config.DEMO_MODE:
+            return MockSpotifyClient.get_instance()
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
@@ -66,6 +128,15 @@ class SpotifyClient:
                     
             except spotipy.SpotifyException as e:
                 print(f"Error fetching audio features for batch {i}-{i+100}: {e}")
+                
+                # Spotify has restricted the audio-features endpoint for many apps (returns 403)
+                # If we get a 403, don't even try individual fallback, and don't try other batches.
+                # Simply skip stats for the remaining tracks to prevent long loops or hanging.
+                if e.http_status in (403, 404):
+                    print("API restricted (403) or missing (404), applying stat-less workaround immediately for all remaining tracks.")
+                    features.extend([None] * (len(track_ids) - len(features)))
+                    return features
+                
                 print(f"Falling back to individual fetch for batch {i}-{min(i+100, len(track_ids))}")
                 
                 # Fallback: Fetch one by one

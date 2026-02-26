@@ -29,6 +29,15 @@ class VentanaOrdenadas(window_name, base_class):
         self.lista_playlists.verticalScrollBar().sliderPressed.connect(self.on_slider_pressed)
         self.lista_playlists.verticalScrollBar().sliderReleased.connect(self.on_slider_released)
 
+        from PyQt5.QtWidgets import QPushButton
+        self.b_spotify = QPushButton(self)
+        self.b_spotify.setText("Abrir en Spotify")
+        self.b_spotify.setMinimumSize(200, 61)
+        self.b_spotify.setMaximumSize(250, 61)
+        self.b_spotify.setCursor(Qt.PointingHandCursor)
+        self.horizontalLayout_4.addWidget(self.b_spotify)
+        self.b_spotify.clicked.connect(self.abrir_en_spotify)
+
 
     def clear(self):
         self.progressBar.setValue(0)
@@ -98,6 +107,12 @@ class VentanaOrdenadas(window_name, base_class):
                 total = int(progress.split("/")[1])
                 self.progressBar.setMaximum(total)
             self.progressBar.setValue(actual)
+
+    def abrir_en_spotify(self):
+        if self.uri:
+            import webbrowser
+            webbrowser.open(f"https://open.spotify.com/playlist/{self.uri}")
+
 
 
     def on_slider_pressed(self):

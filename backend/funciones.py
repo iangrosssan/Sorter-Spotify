@@ -17,8 +17,15 @@ def get_track_data(uri):
     if not os.path.isfile(playlist_file_path):
         create_playlist_json(uri)
 
+    # Need to load it again, it might have just been created
     with open(playlist_file_path, 'r', encoding='utf-8') as playlist_file:
         track_metadata = json.load(playlist_file)
+        
+    # If the cache is completely empty but the file exists, it might be poisoned from a previous failure.
+    if not track_metadata:
+        create_playlist_json(uri)
+        with open(playlist_file_path, 'r', encoding='utf-8') as playlist_file:
+            track_metadata = json.load(playlist_file)
 
     l_tracks = []
     # We load tracks from the cache, but we should make sure they are in order of the LIVE playlist
