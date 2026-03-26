@@ -1,0 +1,50 @@
+zzz-SpotifySorter/
+├── LICENSE
+├── README.md
+├── Spotify Sorter.exe
+├── backend
+│   ├── classes.py
+│   ├── credenciales.csv
+│   ├── d_uri.csv
+│   ├── funciones.py
+│   ├── o_uri.csv
+│   ├── sorters.py
+│   └── spotify_call.py
+├── build
+│   └── main
+│       ├── Analysis-00.toc
+│       ├── EXE-00.toc
+│       ├── PKG-00.toc
+│       ├── PYZ-00.pyz
+│       ├── PYZ-00.toc
+│       ├── base_library.zip
+│       ├── localpycs
+│       │   ├── pyimod01_archive.pyc
+│       │   ├── pyimod02_importers.pyc
+│       │   ├── pyimod03_ctypes.pyc
+│       │   ├── pyimod04_pywin32.pyc
+│       │   └── struct.pyc
+│       ├── main.pkg
+│       ├── warn-main.txt
+│       └── xref-main.html
+├── desktop.ini
+├── dist
+│   └── main.exe
+├── frontend
+│   ├── components.py
+│   ├── styles.qss
+│   ├── ventana_inicio.py
+│   ├── ventana_inicio.ui
+│   ├── ventana_ordenadas.py
+│   ├── ventana_ordenadas2.ui
+│   └── ventana_ordenadas3.ui
+├── frontend_broken
+│   ├── components.py
+│   ├── styles.qss
+│   ├── ventana_inicio.py
+│   ├── ventana_inicio.ui
+│   ├── ventana_ordenadas.py
+│   ├── ventana_ordenadas2.ui
+│   └── ventana_ordenadas3.ui
+├── main.py
+└── main.spec

@@ -82,6 +82,16 @@ python main.py
     *   *Constraint*: Spotify data doesn't provide track language.
     *   *Proposal*: Explore Musixmatch API for lyrics analysis.
 
+## 📁 Estructura del Proyecto
+
+```text
+zzz-SpotifySorter/
+├── backend/
+├── frontend/
+└── main.py
+```
+Vea el archivo `structure.txt` para conocer la organización detallada del repositorio.
+
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
